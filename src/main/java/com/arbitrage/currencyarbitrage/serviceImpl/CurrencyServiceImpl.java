@@ -18,7 +18,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Autowired
     private CurrencyRepository currencyRepository;
 
-    // Add Currency
     @Override
     public CurrencyDTO addCurrency(CurrencyDTO currencyDTO) {
 
@@ -29,7 +28,6 @@ public class CurrencyServiceImpl implements CurrencyService {
         return CurrencyMapper.toDTO(savedCurrency);
     }
 
-    // Get Currency By id
     @Override
     public CurrencyDTO getCurrencyById(Integer id) {
 
@@ -39,7 +37,6 @@ public class CurrencyServiceImpl implements CurrencyService {
         return CurrencyMapper.toDTO(currency);
     }
 
-    // Get All Currencies
     @Override
     public List<CurrencyDTO> getAllCurrencies() {
 
@@ -50,7 +47,6 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .collect(Collectors.toList());
     }
 
-    // Update Currency
     @Override
     public CurrencyDTO updateCurrency(Integer id, CurrencyDTO currencyDTO) {
 
@@ -68,7 +64,6 @@ public class CurrencyServiceImpl implements CurrencyService {
         return CurrencyMapper.toDTO(updatedCurrency);
     }
 
-    // Delete Currency
     @Override
     public void deleteCurrency(Integer id) {
 
