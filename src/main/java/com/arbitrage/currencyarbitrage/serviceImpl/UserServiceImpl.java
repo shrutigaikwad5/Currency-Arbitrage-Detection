@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toDTO(savedUser);
     }
 
-    // Get User By Id
+    // Get User By id
     @Override
     public UserDTO getUserById(Long id) {
 

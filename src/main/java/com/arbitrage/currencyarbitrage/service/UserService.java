@@ -9,7 +9,7 @@ public interface UserService {
     // Add User
     UserDTO addUser(UserDTO userDTO);
 
-    // Get User By Id
+    // Get User By id
     UserDTO getUserById(Long id);
 
     // Get All Users

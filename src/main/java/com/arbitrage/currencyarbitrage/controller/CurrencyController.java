@@ -20,7 +20,7 @@ public class CurrencyController {
         return currencyService.addCurrency(currencyDTO);
     }
 
-    // Get Currency By Id
+    // Get Currency By id
     @GetMapping("/{id}")
     public CurrencyDTO getCurrencyById(@PathVariable Integer id) {
         return currencyService.getCurrencyById(id);
