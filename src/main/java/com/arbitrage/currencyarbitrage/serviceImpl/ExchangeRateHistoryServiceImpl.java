@@ -12,8 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ExchangeRateHistoryServiceImpl
-        implements ExchangeRateHistoryService {
+public class ExchangeRateHistoryServiceImpl implements ExchangeRateHistoryService {
 
     private final FrankfurterHistoryService historyService;
 
@@ -29,7 +28,6 @@ public class ExchangeRateHistoryServiceImpl
         // Loop over all dates
 
         // Save every record into exchange_rate_history
-
     }
 
     @Override
