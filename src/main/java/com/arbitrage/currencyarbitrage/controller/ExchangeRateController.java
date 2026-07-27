@@ -15,6 +15,8 @@ public class ExchangeRateController {
 
     private final ExchangeRateService exchangeRateService;
 
+
+
     // Create Exchange Rate
     @PostMapping
     public ExchangeRateResponse createExchangeRate(
@@ -73,6 +75,7 @@ public class ExchangeRateController {
     @PostMapping("/sync")
     public String syncLatestRates() {
 
+        System.out.println("syncLatestRates() started");
         exchangeRateService.syncLatestRates();
 
         return "Latest Exchange Rates Synced Successfully";

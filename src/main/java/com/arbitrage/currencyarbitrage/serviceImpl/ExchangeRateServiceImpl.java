@@ -4,10 +4,13 @@ import com.arbitrage.currencyarbitrage.dto.api.FrankfurterLatestResponse;
 import com.arbitrage.currencyarbitrage.dto.request.ExchangeRateRequest;
 import com.arbitrage.currencyarbitrage.dto.response.ExchangeRateResponse;
 import com.arbitrage.currencyarbitrage.entity.Currency;
+import com.arbitrage.currencyarbitrage.entity.ExchangeRate;
+import com.arbitrage.currencyarbitrage.entity.ExchangeRateHistory;
 import com.arbitrage.currencyarbitrage.repository.CurrencyRepository;
 import com.arbitrage.currencyarbitrage.repository.ExchangeRateRepository;
 import com.arbitrage.currencyarbitrage.service.ExchangeRateService;
 import com.arbitrage.currencyarbitrage.service.api.frankfuter.external.FrankfurterRateService;
+import com.arbitrage.currencyarbitrage.repository.ExchangeRateHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ public class ExchangeRateServiceImpl
     private final ExchangeRateRepository exchangeRateRepository;
 
     private final FrankfurterRateService rateService;
+
+    private final ExchangeRateHistoryRepository historyRepository;
 
     @Override
     public ExchangeRateResponse createExchangeRate(ExchangeRateRequest request) {
@@ -65,18 +70,62 @@ public class ExchangeRateServiceImpl
             FrankfurterLatestResponse response =
                     rateService.getLatestRates(base.getCurrencyCode());
 
+            System.out.println("Base = " + base.getCurrencyCode());
+
+            if (response == null) {
+                System.out.println("Response is NULL");
+            } else {
+                System.out.println("Rates = " + response.getRates());
+            }
+
             response.getRates().forEach((targetCode,rate)->{
 
-                // Find target currency
+                Currency target = currencyRepository
+                        .findByCurrencyCode(targetCode)
+                        .orElse(null);
 
-                // Update exchange_rate
+                if (target == null) {
+                    System.out.println("Currency not found : " + targetCode);
+                    return;
+                }
 
-                // Save history
+                ExchangeRate exchangeRate = exchangeRateRepository
+                        .findByBaseCurrencyAndTargetCurrency(base, target)
+                        .orElse(new ExchangeRate());
 
+                exchangeRate.setBaseCurrency(base);
+                exchangeRate.setTargetCurrency(target);
+                exchangeRate.setRate(rate);
+                exchangeRate.setProvider("Frankfurter");
+
+                exchangeRateRepository.save(exchangeRate);
+
+                ExchangeRateHistory history = new ExchangeRateHistory();
+
+                history.setBaseCurrency(base);
+                history.setTargetCurrency(target);
+                history.setExchangeRate(rate);
+                history.setOpenRate(rate);
+                history.setHighRate(rate);
+                history.setLowRate(rate);
+                history.setCloseRate(rate);
+                history.setProvider("Frankfurter");
+                history.setSource("Frankfurter API");
+
+                historyRepository.save(history);
+
+                System.out.println(base.getCurrencyCode()
+                        + " -> "
+                        + targetCode
+                        + " = "
+                        + rate);
             });
-
         }
-
     }
 
-}
+            }
+
+
+
+
+
