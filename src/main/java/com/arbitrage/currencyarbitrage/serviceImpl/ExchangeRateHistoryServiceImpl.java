@@ -3,7 +3,7 @@ package com.arbitrage.currencyarbitrage.serviceImpl;
 import com.arbitrage.currencyarbitrage.dto.api.FrankfurterHistoryResponse;
 import com.arbitrage.currencyarbitrage.dto.response.ExchangeRateHistoryResponse;
 import com.arbitrage.currencyarbitrage.service.ExchangeRateHistoryService;
-import com.arbitrage.currencyarbitrage.service.api.frankfuter.external.FrankfurterHistoryService;
+import com.arbitrage.currencyarbitrage.service.api.frankfurter.external.FrankfurterHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
