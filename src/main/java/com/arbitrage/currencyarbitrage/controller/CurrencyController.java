@@ -45,4 +45,11 @@ public class CurrencyController {
         currencyService.deleteCurrency(id);
         return "Currency deleted successfully";
     }
+
+    // Trigger external fetch and save (testing endpoint)
+    @PostMapping("/fetch")
+    public String fetchCurrencies() {
+        currencyService.fetchAndSaveCurrencies();
+        return "Fetch triggered";
+    }
 }

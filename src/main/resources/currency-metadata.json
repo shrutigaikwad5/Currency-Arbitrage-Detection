@@ -1,0 +1,182 @@
+[
+  {
+    "currencyCode": "USD",
+    "currencyName": "US Dollar",
+    "country": "United States",
+    "symbol": "$"
+  },
+  {
+    "currencyCode": "INR",
+    "currencyName": "Indian Rupee",
+    "country": "India",
+    "symbol": "₹"
+  },
+  {
+    "currencyCode": "EUR",
+    "currencyName": "Euro",
+    "country": "European Union",
+    "symbol": "€"
+  },
+  {
+    "currencyCode": "GBP",
+    "currencyName": "Pound Sterling",
+    "country": "United Kingdom",
+    "symbol": "£"
+  },
+  {
+    "currencyCode": "AUD",
+    "currencyName": "Australian Dollar",
+    "country": "Australia",
+    "symbol": "A$"
+  },
+  {
+    "currencyCode": "CAD",
+    "currencyName": "Canadian Dollar",
+    "country": "Canada",
+    "symbol": "C$"
+  },
+  {
+    "currencyCode": "CHF",
+    "currencyName": "Swiss Franc",
+    "country": "Switzerland",
+    "symbol": "CHF"
+  },
+  {
+    "currencyCode": "CNY",
+    "currencyName": "Chinese Renminbi Yuan",
+    "country": "China",
+    "symbol": "¥"
+  },
+  {
+    "currencyCode": "JPY",
+    "currencyName": "Japanese Yen",
+    "country": "Japan",
+    "symbol": "¥"
+  },
+  {
+    "currencyCode": "NZD",
+    "currencyName": "New Zealand Dollar",
+    "country": "New Zealand",
+    "symbol": "NZ$"
+  },
+  {
+    "currencyCode": "SGD",
+    "currencyName": "Singapore Dollar",
+    "country": "Singapore",
+    "symbol": "S$"
+  },
+  {
+    "currencyCode": "HKD",
+    "currencyName": "Hong Kong Dollar",
+    "country": "Hong Kong",
+    "symbol": "HK$"
+  },
+  {
+    "currencyCode": "BRL",
+    "currencyName": "Brazilian Real",
+    "country": "Brazil",
+    "symbol": "R$"
+  },
+  {
+    "currencyCode": "MXN",
+    "currencyName": "Mexican Peso",
+    "country": "Mexico",
+    "symbol": "$"
+  },
+  {
+    "currencyCode": "SEK",
+    "currencyName": "Swedish Krona",
+    "country": "Sweden",
+    "symbol": "kr"
+  },
+  {
+    "currencyCode": "NOK",
+    "currencyName": "Norwegian Krone",
+    "country": "Norway",
+    "symbol": "kr"
+  },
+  {
+    "currencyCode": "DKK",
+    "currencyName": "Danish Krone",
+    "country": "Denmark",
+    "symbol": "kr"
+  },
+  {
+    "currencyCode": "PLN",
+    "currencyName": "Polish Złoty",
+    "country": "Poland",
+    "symbol": "zł"
+  },
+  {
+    "currencyCode": "CZK",
+    "currencyName": "Czech Koruna",
+    "country": "Czech Republic",
+    "symbol": "Kč"
+  },
+  {
+    "currencyCode": "RON",
+    "currencyName": "Romanian Leu",
+    "country": "Romania",
+    "symbol": "lei"
+  },
+  {
+    "currencyCode": "TRY",
+    "currencyName": "Turkish Lira",
+    "country": "Turkey",
+    "symbol": "₺"
+  },
+  {
+    "currencyCode": "THB",
+    "currencyName": "Thai Baht",
+    "country": "Thailand",
+    "symbol": "฿"
+  },
+  {
+    "currencyCode": "MYR",
+    "currencyName": "Malaysian Ringgit",
+    "country": "Malaysia",
+    "symbol": "RM"
+  },
+  {
+    "currencyCode": "PHP",
+    "currencyName": "Philippine Peso",
+    "country": "Philippines",
+    "symbol": "₱"
+  },
+  {
+    "currencyCode": "IDR",
+    "currencyName": "Indonesian Rupiah",
+    "country": "Indonesia",
+    "symbol": "Rp"
+  },
+  {
+    "currencyCode": "KRW",
+    "currencyName": "South Korean Won",
+    "country": "South Korea",
+    "symbol": "₩"
+  },
+  {
+    "currencyCode": "ILS",
+    "currencyName": "Israeli New Shekel",
+    "country": "Israel",
+    "symbol": "₪"
+  },
+  {
+    "currencyCode": "ISK",
+    "currencyName": "Icelandic Króna",
+    "country": "Iceland",
+    "symbol": "kr"
+  },
+  {
+    "currencyCode": "HUF",
+    "currencyName": "Hungarian Forint",
+    "country": "Hungary",
+    "symbol": "Ft"
+  },
+  {
+    "currencyCode": "ZAR",
+    "currencyName": "South African Rand",
+    "country": "South Africa",
+    "symbol": "R"
+  }
+]

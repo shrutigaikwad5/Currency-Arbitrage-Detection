@@ -12,4 +12,7 @@ public interface CurrencyService {
     CurrencyDTO updateCurrency(Integer id, CurrencyDTO currencyDTO);
     void deleteCurrency(Integer id);
 
+    // Fetch currencies from external provider (Frankfurter) and persist new ones
+    void fetchAndSaveCurrencies();
+
 }

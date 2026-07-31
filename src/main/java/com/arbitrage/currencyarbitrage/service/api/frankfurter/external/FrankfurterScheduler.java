@@ -17,7 +17,8 @@ public class FrankfurterScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     public void getAllCurrencies(){
 
-        currencyService.getAllCurrencies();
+        // Fetch from external provider and save into DB
+        currencyService.fetchAndSaveCurrencies();
 
     }
 
