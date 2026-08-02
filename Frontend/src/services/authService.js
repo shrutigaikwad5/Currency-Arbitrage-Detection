@@ -1,0 +1,54 @@
+import axios from 'axios'
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+export function setAuthToken(token) {
+  if (token) {
+    api.defaults.headers.common.Authorization = `Bearer ${token}`
+    return
+  }
+
+  delete api.defaults.headers.common.Authorization
+}
+
+function getErrorMessage(error) {
+  return error?.response?.data?.message || error?.response?.data?.error || error?.message || 'Request failed. Please try again.'
+}
+
+export async function login(credentials) {
+  const response = await api.post('/auth/login', credentials)
+  const payload = response.data?.data || response.data
+  const token = payload?.token || payload?.accessToken || payload?.jwt || null
+  const user = payload?.user || payload?.profile || payload?.data?.user || null
+
+  return { token, user, message: payload?.message || 'Login successful.', response }
+}
+
+export async function register(user) {
+  const response = await api.post('/auth/register', user)
+  const payload = response.data?.data || response.data
+  return { message: payload?.message || 'Registration successful.', response }
+}
+
+export async function logout() {
+  try {
+    await api.post('/auth/logout')
+  } catch (error) {
+    // Ignore logout failures and clear local state on the client side.
+    console.warn(getErrorMessage(error))
+  }
+}
+
+export async function getCurrentUser() {
+  const response = await api.get('/auth/me')
+  return response.data?.data || response.data
+}
+
+export async function refreshToken() {
+  return Promise.resolve({ message: 'Refresh token endpoint is not configured yet.' })
+}
