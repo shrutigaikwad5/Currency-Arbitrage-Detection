@@ -21,7 +21,8 @@ import { UserRoute } from './routes/UserRoute'
 
 function App() {
   return (
-    <ThemeProvider>
+     <CurrencyPage/>
+    /*<ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -75,6 +76,8 @@ function App() {
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
+  )
+    */
   )
 }
 

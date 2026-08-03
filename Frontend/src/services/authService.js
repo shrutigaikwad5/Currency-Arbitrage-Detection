@@ -16,11 +16,18 @@ function getErrorMessage(error) {
 
 export async function login(credentials) {
   const response = await api.post(API_ENDPOINTS.auth.login, credentials)
-  const payload = response.data?.data || response.data
-  const token = payload?.token || payload?.accessToken || payload?.jwt || null
-  const user = payload?.user || payload?.profile || payload?.data?.user || null
 
-  return { token, user, message: payload?.message || 'Login successful.', response }
+  const payload = response.data?.data || response.data
+
+  const token = payload.token
+  const role = payload.role
+
+  return {
+    token,
+    role,
+    message: payload.message || 'Login successful.',
+    response,
+  }
 }
 
 export async function register(user) {

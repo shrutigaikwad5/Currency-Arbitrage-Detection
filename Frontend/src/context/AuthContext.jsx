@@ -27,27 +27,36 @@ const normalizeUser = (user, fallbackEmail = '') => {
 }
 
 export function AuthProvider({ children }) {
+
   const [currentUser, setCurrentUser] = useState(() => {
     const storedUser = localStorage.getItem('authUser')
     return storedUser ? normalizeUser(JSON.parse(storedUser)) : null
   })
-  const [token, setToken] = useState(() => localStorage.getItem('authToken'))
-  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem('authToken')))
+
+  const [token, setToken] = useState(() =>
+    localStorage.getItem('authToken')
+  )
+
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    Boolean(localStorage.getItem('authToken'))
+  )
+
   const [isLoading, setIsLoading] = useState(true)
 
   const clearAuthState = () => {
     localStorage.removeItem('authToken')
     localStorage.removeItem('authUser')
-    localStorage.removeItem('role')
-    localStorage.removeItem('username')
     authService.setAuthToken(null)
+
     setToken(null)
     setCurrentUser(null)
     setIsAuthenticated(false)
   }
 
   useEffect(() => {
+
     const initialiseAuth = async () => {
+
       const storedToken = localStorage.getItem('authToken')
       const storedUser = localStorage.getItem('authUser')
 
@@ -59,7 +68,7 @@ export function AuthProvider({ children }) {
       authService.setAuthToken(storedToken)
 
       if (storedUser) {
-        setCurrentUser(normalizeUser(JSON.parse(storedUser)))
+        setCurrentUser(JSON.parse(storedUser))
       }
 
       try {
@@ -67,12 +76,8 @@ export function AuthProvider({ children }) {
         const nextUser = user?.user || user?.profile || user || null
 
         if (nextUser) {
-          const normalized = normalizeUser(nextUser)
-          setCurrentUser(normalized)
-          localStorage.setItem('authUser', JSON.stringify(normalized))
-          if (normalized.role) {
-            localStorage.setItem('role', normalized.role)
-          }
+          setCurrentUser(nextUser)
+          localStorage.setItem('authUser', JSON.stringify(nextUser))
           setIsAuthenticated(true)
         } else {
           clearAuthState()
@@ -86,16 +91,23 @@ export function AuthProvider({ children }) {
     }
 
     initialiseAuth()
+
   }, [])
 
   const login = async (credentials) => {
+
     setIsLoading(true)
 
     try {
-      const { token: nextToken, user: nextUser } = await authService.login(credentials)
+      const { token: nextToken, user } = await authService.login(credentials)
 
       if (!nextToken) {
-        throw new Error('No authentication token was returned by the server.')
+        throw new Error("No authentication token returned.")
+      }
+
+      const user = {
+        email: credentials.email,
+        role: role,
       }
 
       const normalizedUser = normalizeUser(nextUser || { email: credentials.email }, credentials.email)
@@ -103,45 +115,63 @@ export function AuthProvider({ children }) {
       const persistedUser = { ...normalizedUser, role }
 
       localStorage.setItem('authToken', nextToken)
-      localStorage.setItem('authUser', JSON.stringify(persistedUser))
-      localStorage.setItem('role', role)
-      localStorage.setItem('username', persistedUser.username || persistedUser.email || credentials.email)
+      localStorage.setItem('authUser', JSON.stringify(user || { email: credentials.email }))
       authService.setAuthToken(nextToken)
+
       setToken(nextToken)
-      setCurrentUser(persistedUser)
+      setCurrentUser(user || { email: credentials.email })
       setIsAuthenticated(true)
 
-      return { success: true, user: persistedUser }
+      return { success: true, user: user || { email: credentials.email } }
     } catch (error) {
+
       clearAuthState()
-      throw new Error(error.message || 'Unable to sign in. Please try again.')
+
+      throw new Error(
+        error.message || "Unable to sign in."
+      )
+
     } finally {
+
       setIsLoading(false)
+
     }
   }
 
   const register = async (user) => {
+
     try {
       return await authService.register(user)
     } catch (error) {
-      throw new Error(error.message || 'Unable to create your account right now.')
+      throw new Error(
+        error.message ||
+        "Unable to create account."
+      )
     }
+
   }
 
   const logout = async () => {
+
     try {
       await authService.logout()
     } finally {
       clearAuthState()
     }
+
   }
 
   const refreshToken = async () => {
+
     try {
       return await authService.refreshToken()
     } catch (error) {
-      throw new Error(error.message || 'Unable to refresh the session.')
+      throw new Error(
+        error.message ||
+        "Unable to refresh session."
+      )
     }
+
   }
 
   const value = useMemo(() => ({
@@ -153,11 +183,14 @@ export function AuthProvider({ children }) {
     refreshToken,
     isAuthenticated,
     isLoading,
-    role: currentUser?.role || localStorage.getItem('role') || 'ROLE_USER',
-    userName: currentUser?.username || currentUser?.name || currentUser?.email || localStorage.getItem('username') || 'User',
   }), [currentUser, token, isAuthenticated, isLoading])
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  )
+
 }
 
 export default AuthContext
