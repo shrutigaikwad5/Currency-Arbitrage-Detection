@@ -24,9 +24,12 @@ export async function login(credentials) {
 
   return {
     token,
-    role,
-    message: payload.message || 'Login successful.',
-    response,
+    user: {
+      email: credentials.email,
+      role: role
+    },
+    message: payload.message || "Login successful.",
+    response
   }
 }
 

@@ -19,9 +19,15 @@ export default function Login() {
   useEffect(() => {
 
     if (isAuthenticated) {
-      navigate('/dashboard', { replace: true })
-      return
-    }
+  const role = localStorage.getItem("role");
+
+  if (role === "ROLE_ADMIN") {
+    navigate("/admin", { replace: true });
+  } else {
+    navigate("/dashboard", { replace: true });
+  }
+  return;
+}
 
     const params = new URLSearchParams(location.search)
 
@@ -35,9 +41,19 @@ export default function Login() {
     try {
 
       setError('')
-      await login(credentials)
-      setSuccessMessage('Login successful. Redirecting to your dashboard...')
-      window.setTimeout(() => navigate(redirectPath, { replace: true }), 700)
+      const result = await login(credentials);
+
+setSuccessMessage("Login successful. Redirecting...");
+
+window.setTimeout(() => {
+  const role = result.user?.role || localStorage.getItem("role");
+
+  if (role === "ROLE_ADMIN") {
+    navigate("/admin", { replace: true });
+  } else {
+    navigate("/dashboard", { replace: true });
+  }
+}, 700);
     } catch (err) {
 
       setError(err.message)
