@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, isAuthenticated } = useAuth()
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
@@ -16,11 +16,16 @@ export default function Login() {
   }, [location.search])
 
   useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+      return
+    }
+
     const params = new URLSearchParams(location.search)
     if (params.get('registered') === 'true') {
       setSuccessMessage('Account created successfully. Please sign in.')
     }
-  }, [location.search])
+  }, [isAuthenticated, location.search, navigate])
 
   const handleSubmit = async (credentials) => {
     try {

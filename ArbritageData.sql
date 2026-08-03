@@ -1,1 +1,1 @@
-SELECT * FROM currency.users;
+SELECT * FROM currency.currency;

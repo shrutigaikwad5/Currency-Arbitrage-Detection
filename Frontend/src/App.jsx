@@ -2,13 +2,16 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { DashboardLayout } from './layouts/DashboardLayout'
+import Arbitrage from './pages/Arbitrage'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
+import LiveExchangeRatesPage from './pages/LiveExchangeRates'
 import Login from './pages/Login'
+import Prediction from './pages/Prediction'
+import Profile from './pages/Profile'
 import Register from './pages/Register'
-import Portfolio from './pages/Portfolio'
-import Arbitrage from './pages/Arbitrage'
-import Predictions from './pages/Predictions'
+import Reports from './pages/Reports'
 
 function App() {
   return (
@@ -19,10 +22,23 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
-            <Route path="/arbitrage" element={<ProtectedRoute><Arbitrage /></ProtectedRoute>} />
-            <Route path="/predictions" element={<ProtectedRoute><Predictions /></ProtectedRoute>} />
+
+            <Route
+              path="/dashboard"
+              element={(
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              )}
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="live-rates" element={<LiveExchangeRatesPage />} />
+              <Route path="prediction" element={<Prediction />} />
+              <Route path="arbitrage" element={<Arbitrage />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

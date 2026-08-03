@@ -6,9 +6,7 @@ import {
   TrendingUp,
   Wallet,
   Waypoints,
-  Zap,
   Lock,
-  Cloud,
 } from 'lucide-react'
 
 export const featureItems = [
@@ -48,18 +46,8 @@ export const featureItems = [
     description: 'Assess route efficiency and bottleneck risk across complex conversion paths and liquidity pools.',
   },
   {
-    icon: Zap,
-    title: 'REST API Integration',
-    description: 'Integrate directly with internal treasury systems, OMS, and analytics tools via robust APIs.',
-  },
-  {
     icon: Lock,
     title: 'Secure Authentication',
     description: 'Protect every workflow with enterprise-grade identities, audit trails, and MFA controls.',
-  },
-  {
-    icon: Cloud,
-    title: 'Cloud Ready',
-    description: 'Deploy across private cloud, hybrid, or public infrastructures with resilient scalability.',
   },
 ]

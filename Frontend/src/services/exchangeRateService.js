@@ -1,17 +1,13 @@
-import axios from 'axios'
+import api from './api'
+import { API_ENDPOINTS } from '../constants/apiEndpoints'
 
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api/exchange-rate',
-  timeout: 10000,
-})
-
-export const syncLatestRates = async () => {
-  const response = await client.post('/sync')
+export const getAllExchangeRates = async () => {
+  const response = await api.get(API_ENDPOINTS.exchangeRate.base)
   return response.data
 }
 
 export const getExchangeRate = async (baseCurrency, targetCurrency) => {
-  const response = await client.get('/search', {
+  const response = await api.get(API_ENDPOINTS.exchangeRate.search, {
     params: {
       baseCurrency,
       targetCurrency,
@@ -21,16 +17,31 @@ export const getExchangeRate = async (baseCurrency, targetCurrency) => {
   return response.data
 }
 
+export const syncLatestRates = async () => {
+  const response = await api.post(API_ENDPOINTS.exchangeRate.sync)
+  return response.data
+}
+
+export const createExchangeRate = async (data) => {
+  const response = await api.post(API_ENDPOINTS.exchangeRate.base, data)
+  return response.data
+}
+
+export const updateExchangeRate = async (id, data) => {
+  const response = await api.put(API_ENDPOINTS.exchangeRate.byId(id), data)
+  return response.data
+}
+
+export const deleteExchangeRate = async (id) => {
+  const response = await api.delete(API_ENDPOINTS.exchangeRate.byId(id))
+  return response.data
+}
+
 export const fetchExchangeRates = async () => {
   try {
     return await getExchangeRate('USD', 'INR')
   } catch (error) {
-    console.warn('Falling back to local exchange-rate sample data.', error)
-    return {
-      rate: '86.42',
-      baseCurrency: 'USD',
-      targetCurrency: 'INR',
-      updatedAt: new Date().toISOString(),
-    }
+    console.warn('Unable to connect to backend.', error)
+    throw error
   }
 }

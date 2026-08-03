@@ -1,8 +1,8 @@
-import { ArrowRight, TrendingUp, Zap, BadgeCheck } from 'lucide-react'
+import { ArrowRight, Zap, BadgeCheck } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { fetchExchangeRates } from '../services/exchangeRateService'
 import { fetchPrediction } from '../services/predictionService'
+import { fetchExchangeRates } from '../services/exchangeRateService'
 
 const tickerPairs = [
   { label: 'USD/INR', value: '86.42', change: '+0.28%' },
@@ -17,9 +17,13 @@ export function HeroSection() {
 
   useEffect(() => {
     const load = async () => {
-      const [rateData, predictionData] = await Promise.all([fetchExchangeRates(), fetchPrediction()])
-      setRates(rateData)
-      setPrediction(predictionData)
+      try {
+        const [rateData, predictionData] = await Promise.all([fetchExchangeRates(), fetchPrediction()])
+        setRates(rateData)
+        setPrediction(predictionData)
+      } catch (error) {
+        console.error('Hero section data loading failed:', error)
+      }
     }
 
     load()

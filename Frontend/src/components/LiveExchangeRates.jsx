@@ -1,173 +1,32 @@
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Activity, ArrowRightLeft, Clock3, LoaderCircle, RefreshCcw, TrendingDown, TrendingUp } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { getExchangeRate, syncLatestRates } from '../services/exchangeRateService'
+import { useState } from 'react'
+import { useExchangeRates } from '../hooks/useExchangeRates'
 
 const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'INR']
-
-const formatTimestamp = (value) => {
-  const date = value ? new Date(value) : new Date()
-
-  if (Number.isNaN(date.getTime())) {
-    return 'Just now'
-  }
-
-  return date.toLocaleString([], {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
-}
-
-const buildFallbackRate = (baseCurrency, targetCurrency) => {
-  const pairKey = `${baseCurrency.toUpperCase()}-${targetCurrency.toUpperCase()}`
-  const fallbackMap = {
-    'USD-INR': '86.42',
-    'EUR-USD': '1.0842',
-    'GBP-USD': '1.2684',
-    'JPY-USD': '0.0067',
-    'USD-EUR': '0.9220',
-    'USD-GBP': '0.7882',
-    'USD-JPY': '157.32',
-  }
-
-  return {
-    baseCurrency: baseCurrency.toUpperCase(),
-    targetCurrency: targetCurrency.toUpperCase(),
-    rate: fallbackMap[pairKey] ?? '1.0000',
-    updatedAt: new Date().toISOString(),
-  }
-}
-
-const normalizeRate = (rawRate, baseCurrency, targetCurrency) => {
-  if (!rawRate) {
-    return buildFallbackRate(baseCurrency, targetCurrency)
-  }
-
-  const payload = rawRate.data ?? rawRate
-  const rateValue = payload?.rate ?? payload?.exchangeRate ?? payload?.value ?? payload?.latestRate ?? payload?.amount
-
-  return {
-    baseCurrency: payload?.baseCurrency ?? baseCurrency.toUpperCase(),
-    targetCurrency: payload?.targetCurrency ?? targetCurrency.toUpperCase(),
-    rate: rateValue != null ? String(rateValue) : buildFallbackRate(baseCurrency, targetCurrency).rate,
-    updatedAt: payload?.updatedAt ?? payload?.updated_at ?? payload?.timestamp ?? payload?.time ?? new Date().toISOString(),
-  }
-}
 
 export function LiveExchangeRates() {
   const [baseCurrency, setBaseCurrency] = useState('USD')
   const [targetCurrency, setTargetCurrency] = useState('INR')
-  const [rateData, setRateData] = useState(null)
-  const [chartData, setChartData] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSyncing, setIsSyncing] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    let isMounted = true
-
-    const initializeRates = async () => {
-      try {
-        setIsSyncing(true)
-        await syncLatestRates()
-
-        if (!isMounted) {
-          return
-        }
-      } catch (syncError) {
-        console.warn('Initial sync failed. Showing the UI with fallback data.', syncError)
-      } finally {
-        if (isMounted) {
-          setIsSyncing(false)
-        }
-      }
-    }
-
-    initializeRates()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  useEffect(() => {
-    let isMounted = true
-
-    const fetchRate = async () => {
-      try {
-        setIsLoading(true)
-        setError('')
-        setChartData([])
-
-        const response = await getExchangeRate(baseCurrency, targetCurrency)
-
-        if (!isMounted) {
-          return
-        }
-
-        const normalizedRate = normalizeRate(response, baseCurrency, targetCurrency)
-        setRateData(normalizedRate)
-        setChartData([
-          {
-            timestamp: formatTimestamp(normalizedRate.updatedAt),
-            rate: Number(normalizedRate.rate),
-          },
-        ])
-      } catch (fetchError) {
-        if (!isMounted) {
-          return
-        }
-
-        const fallbackRate = buildFallbackRate(baseCurrency, targetCurrency)
-        setRateData(fallbackRate)
-        setChartData([
-          {
-            timestamp: formatTimestamp(fallbackRate.updatedAt),
-            rate: Number(fallbackRate.rate),
-          },
-        ])
-        setError('Unable to reach the backend right now. The dashboard is showing fallback sample data.')
-      } finally {
-        if (isMounted) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    fetchRate()
-
-    return () => {
-      isMounted = false
-    }
-  }, [baseCurrency, targetCurrency])
-
-  useEffect(() => {
-    const intervalId = window.setInterval(async () => {
-      try {
-        const response = await getExchangeRate(baseCurrency, targetCurrency)
-        const normalizedRate = normalizeRate(response, baseCurrency, targetCurrency)
-        setRateData(normalizedRate)
-        setChartData((previousData) => {
-          const nextPoint = {
-            timestamp: formatTimestamp(normalizedRate.updatedAt),
-            rate: Number(normalizedRate.rate),
-          }
-
-          return [...previousData, nextPoint].slice(-20)
-        })
-      } catch (pollError) {
-        console.warn('Polling failed. Will retry on the next cycle.', pollError)
-      }
-    }, 30000)
-
-    return () => {
-      window.clearInterval(intervalId)
-    }
-  }, [baseCurrency, targetCurrency])
+  const { rateData, history, isLoading, isSyncing, error, refresh, sync } = useExchangeRates({
+    baseCurrency,
+    targetCurrency,
+    autoRefresh: true,
+    refreshIntervalMs: 30000,
+  })
 
   const currentRate = rateData?.rate ?? '0.0000'
   const rateTrend = Number(currentRate) > 1 ? 'up' : 'stable'
+  const chartData = history.length > 0 ? history : []
+
+  const handleRefresh = async () => {
+    await refresh()
+  }
+
+  const handleSync = async () => {
+    await sync()
+  }
 
   return (
     <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
@@ -185,9 +44,14 @@ export function LiveExchangeRates() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm text-slate-300">
-            <Clock3 size={16} className="text-cyan-400" />
-            Last Updated: {rateData ? formatTimestamp(rateData.updatedAt) : 'Loading...'}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm text-slate-300">
+              <Clock3 size={16} className="text-cyan-400" />
+              Last Updated: {rateData ? new Date(rateData.updatedAt).toLocaleString() : 'Loading...'}
+            </div>
+            <button type="button" onClick={handleSync} className="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 transition hover:border-cyan-400">
+              Sync now
+            </button>
           </div>
         </div>
 
@@ -258,10 +122,10 @@ export function LiveExchangeRates() {
                 {rateTrend === 'up' ? <TrendingUp size={16} className="text-emerald-400" /> : <TrendingDown size={16} className="text-cyan-400" />}
                 Market trend: {rateTrend === 'up' ? 'Positive momentum' : 'Steady'}
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-2">
+              <button type="button" onClick={handleRefresh} className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-2 transition hover:bg-slate-700">
                 <RefreshCcw size={16} className="text-cyan-400" />
-                Refreshed every 30 seconds
-              </div>
+                Refresh now
+              </button>
               {isSyncing ? (
                 <div className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-2">
                   <LoaderCircle size={16} className="animate-spin text-emerald-400" />
