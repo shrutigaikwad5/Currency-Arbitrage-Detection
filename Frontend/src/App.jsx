@@ -12,10 +12,13 @@ import Prediction from './pages/Prediction'
 import Profile from './pages/Profile'
 import Register from './pages/Register'
 import Reports from './pages/Reports'
+import { Currency } from 'lucide-react'
+import CurrencyPage from './pages/currency'
 
 function App() {
   return (
-    <ThemeProvider>
+     <CurrencyPage/>
+    /*<ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -45,6 +48,9 @@ function App() {
       </AuthProvider>
     </ThemeProvider>
   )
+    */
+  )
 }
+
 
 export default App
