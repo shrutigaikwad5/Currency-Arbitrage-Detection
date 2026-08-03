@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isLoading, isAuthenticated } = useAuth()
+  const { login, isLoading, isAuthenticated, currentUser } = useAuth()
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
@@ -17,7 +17,9 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard', { replace: true })
+      const role = currentUser?.role || currentUser?.roles?.[0] || localStorage.getItem('role')
+      const nextPath = role === 'ROLE_ADMIN' ? '/administrator' : redirectPath
+      navigate(nextPath, { replace: true })
       return
     }
 
@@ -25,14 +27,16 @@ export default function Login() {
     if (params.get('registered') === 'true') {
       setSuccessMessage('Account created successfully. Please sign in.')
     }
-  }, [isAuthenticated, location.search, navigate])
+  }, [currentUser, isAuthenticated, location.search, navigate, redirectPath])
 
   const handleSubmit = async (credentials) => {
     try {
       setError('')
-      await login(credentials)
-      setSuccessMessage('Login successful. Redirecting to your dashboard...')
-      window.setTimeout(() => navigate(redirectPath, { replace: true }), 700)
+      const result = await login(credentials)
+      const role = result?.user?.role || result?.user?.roles?.[0] || localStorage.getItem('role')
+      const nextPath = role === 'ROLE_ADMIN' ? '/administrator' : redirectPath
+      setSuccessMessage('Login successful. Redirecting to your workspace...')
+      window.setTimeout(() => navigate(nextPath, { replace: true }), 700)
     } catch (err) {
       setError(err.message)
     }
